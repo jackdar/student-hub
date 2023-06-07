@@ -3,11 +3,13 @@
  */
 package com.jackdarlington.studenthub.ui;
 
+import com.jackdarlington.studenthub.main.Controller;
 import com.jackdarlington.studenthub.main.Model;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,29 +50,67 @@ public class LogInUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        loginPanel = new javax.swing.JPanel();
+        jLayeredPane1 = new javax.swing.JLayeredPane();
         loginLabelTitle = new javax.swing.JLabel();
-        loginButton = new javax.swing.JButton();
         loginEmailLabel = new javax.swing.JLabel();
         loginPasswordLabel = new javax.swing.JLabel();
         loginEmailField = new javax.swing.JTextField();
-        loginPasswordField = new javax.swing.JTextField();
+        loginPasswordField = new javax.swing.JPasswordField();
+        loginButton = new javax.swing.JButton();
+        loginErrorLabel = new javax.swing.JLabel();
         loginSettingsButton = new javax.swing.JButton();
         backgroundPanel = new javax.swing.JPanel();
         bg = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Student Hub");
+        setTitle("Student Hub Login");
+        setMinimumSize(new java.awt.Dimension(360, 480));
+        setPreferredSize(new java.awt.Dimension(370, 480));
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        loginPanel.setBackground(new Color(0,0,0,200));
-        loginPanel.setMinimumSize(new java.awt.Dimension(350, 450));
-        loginPanel.setPreferredSize(new java.awt.Dimension(500, 600));
+        jLayeredPane1.setBackground(new Color(0.0f,0.0f,0.0f,0.6f));
+        jLayeredPane1.setMinimumSize(new java.awt.Dimension(360, 480));
+        jLayeredPane1.setOpaque(true);
+        jLayeredPane1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         loginLabelTitle.setBackground(new java.awt.Color(255, 255, 255));
         loginLabelTitle.setFont(titleFont);
         loginLabelTitle.setText("Student Hub");
+        loginLabelTitle.setForeground(Color.WHITE);
+        jLayeredPane1.add(loginLabelTitle, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, -1, -1));
+
+        loginEmailLabel.setText("Email");
+        jLayeredPane1.add(loginEmailLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 110, -1, -1));
+
+        loginPasswordLabel.setText("Password");
+        jLayeredPane1.add(loginPasswordLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 200, -1, -1));
+
+        loginEmailField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loginEmailFieldActionPerformed(evt);
+            }
+        });
+        loginEmailField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                loginEmailFieldKeyPressed(evt);
+            }
+        });
+        loginEmailField.putClientProperty("JTextField.verticalAlignment", SwingConstants.CENTER);
+        jLayeredPane1.add(loginEmailField, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 130, 270, 40));
+
+        loginPasswordField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loginPasswordFieldActionPerformed(evt);
+            }
+        });
+        loginPasswordField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                loginPasswordFieldKeyPressed(evt);
+            }
+        });
+        loginPasswordField.putClientProperty("JTextField.verticalAlignment", SwingConstants.CENTER);
+        jLayeredPane1.add(loginPasswordField, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 220, 270, 40));
 
         loginButton.setText("Log In");
         loginButton.setMaximumSize(new java.awt.Dimension(72, 30));
@@ -81,118 +121,124 @@ public class LogInUI extends javax.swing.JFrame {
                 loginButtonActionPerformed(evt);
             }
         });
+        jLayeredPane1.add(loginButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 300, 270, 30));
 
-        loginEmailLabel.setText("Email");
-
-        loginPasswordLabel.setText("Password");
+        loginErrorLabel.setBackground(new Color(0,0,0,0));
+        loginErrorLabel.setForeground(new java.awt.Color(255, 0, 0));
+        loginErrorLabel.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
+        jLayeredPane1.setLayer(loginErrorLabel, javax.swing.JLayeredPane.PALETTE_LAYER);
+        jLayeredPane1.add(loginErrorLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 270, 270, -1));
 
         loginSettingsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cog-wheel-silhouette-20px.png"))); // NOI18N
         loginSettingsButton.setMaximumSize(new java.awt.Dimension(50, 50));
         loginSettingsButton.setMinimumSize(new java.awt.Dimension(50, 50));
         loginSettingsButton.setPreferredSize(new java.awt.Dimension(50, 50));
         loginSettingsButton.setRolloverEnabled(false);
-        loginSettingsButton.setSize(new java.awt.Dimension(50, 50));
+        loginSettingsButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                loginSettingsButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                loginSettingsButtonMouseExited(evt);
+            }
+        });
         loginSettingsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loginSettingsButtonActionPerformed(evt);
             }
         });
+        jLayeredPane1.add(loginSettingsButton, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 400, 30, 30));
 
-        loginLabelTitle.setForeground(Color.WHITE);
-        loginEmailField.putClientProperty("JTextField.verticalAlignment", SwingConstants.CENTER);
-        loginPasswordField.putClientProperty("JTextField.verticalAlignment", SwingConstants.CENTER);
+        getContentPane().add(jLayeredPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 360, 480));
 
-        javax.swing.GroupLayout loginPanelLayout = new javax.swing.GroupLayout(loginPanel);
-        loginPanel.setLayout(loginPanelLayout);
-        loginPanelLayout.setHorizontalGroup(
-            loginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(loginPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(loginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, loginPanelLayout.createSequentialGroup()
-                        .addGap(0, 92, Short.MAX_VALUE)
-                        .addGroup(loginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, loginPanelLayout.createSequentialGroup()
-                                .addComponent(loginLabelTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 292, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(84, 84, 84))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, loginPanelLayout.createSequentialGroup()
-                                .addGroup(loginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(loginEmailField)
-                                    .addComponent(loginPasswordLabel)
-                                    .addComponent(loginEmailLabel)
-                                    .addComponent(loginPasswordField, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
-                                    .addComponent(loginButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(99, 99, 99))))
-                    .addGroup(loginPanelLayout.createSequentialGroup()
-                        .addComponent(loginSettingsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))))
-        );
-        loginPanelLayout.setVerticalGroup(
-            loginPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(loginPanelLayout.createSequentialGroup()
-                .addGap(100, 100, 100)
-                .addComponent(loginLabelTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(39, 39, 39)
-                .addComponent(loginEmailLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(loginEmailField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
-                .addComponent(loginPasswordLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(loginPasswordField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(34, 34, 34)
-                .addComponent(loginButton, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 138, Short.MAX_VALUE)
-                .addComponent(loginSettingsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        getContentPane().add(loginPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 490, -1));
+        backgroundPanel.setMinimumSize(new java.awt.Dimension(360, 480));
+        backgroundPanel.setPreferredSize(new java.awt.Dimension(360, 480));
 
         bg.setFont(bg.getFont());
         bg.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/bg.png"))); // NOI18N
         bg.setToolTipText("");
+        bg.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bg.setIconTextGap(0);
+        bg.setMaximumSize(new java.awt.Dimension(490, 600));
+        bg.setMinimumSize(new java.awt.Dimension(490, 600));
+        bg.setOpaque(true);
+        bg.setPreferredSize(new java.awt.Dimension(490, 600));
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(bg, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(bg, javax.swing.GroupLayout.PREFERRED_SIZE, 360, Short.MAX_VALUE)
         );
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(backgroundPanelLayout.createSequentialGroup()
-                .addComponent(bg)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                .addComponent(bg, javax.swing.GroupLayout.PREFERRED_SIZE, 480, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        getContentPane().add(backgroundPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 970, 600));
+        getContentPane().add(backgroundPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 360, 480));
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void loginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginButtonActionPerformed
-        String emailString = loginEmailField.getText();
+        String userNameString = loginEmailField.getText();
         String passwordString = loginPasswordField.getText();
         
-        System.out.println("Logging in as " + emailString);
+        if (Controller.attemptLogIn(userNameString, passwordString)) {
+            System.out.println("Logging in as " + Model.loggedInUser.getFirstName() + " " + Model.loggedInUser.getLastName());
+            this.setVisible(false);
+            new SessionUI().setVisible(true);
+        } else {
+            loginErrorLabel.setText("That is not a valid username or password!");
+        }
     }//GEN-LAST:event_loginButtonActionPerformed
 
     private void loginSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginSettingsButtonActionPerformed
         new SettingsUI().setVisible(true);
     }//GEN-LAST:event_loginSettingsButtonActionPerformed
 
+    private void loginEmailFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginEmailFieldActionPerformed
+        
+    }//GEN-LAST:event_loginEmailFieldActionPerformed
+
+    private void loginEmailFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_loginEmailFieldKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            loginButtonActionPerformed(null);
+        }
+    }//GEN-LAST:event_loginEmailFieldKeyPressed
+
+    private void loginPasswordFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_loginPasswordFieldKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            loginButtonActionPerformed(null);
+        }
+    }//GEN-LAST:event_loginPasswordFieldKeyPressed
+
+    private void loginPasswordFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginPasswordFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_loginPasswordFieldActionPerformed
+
+    private void loginSettingsButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginSettingsButtonMouseEntered
+        loginSettingsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cog-wheel-silhouette-20px-hover.png")));
+    }//GEN-LAST:event_loginSettingsButtonMouseEntered
+
+    private void loginSettingsButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_loginSettingsButtonMouseExited
+        loginSettingsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/cog-wheel-silhouette-20px.png")));
+    }//GEN-LAST:event_loginSettingsButtonMouseExited
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JLabel bg;
+    private javax.swing.JLayeredPane jLayeredPane1;
     private javax.swing.JButton loginButton;
     private javax.swing.JTextField loginEmailField;
     private javax.swing.JLabel loginEmailLabel;
+    private javax.swing.JLabel loginErrorLabel;
     private javax.swing.JLabel loginLabelTitle;
-    private javax.swing.JPanel loginPanel;
-    private javax.swing.JTextField loginPasswordField;
+    private javax.swing.JPasswordField loginPasswordField;
     private javax.swing.JLabel loginPasswordLabel;
     private javax.swing.JButton loginSettingsButton;
     // End of variables declaration//GEN-END:variables

@@ -5,12 +5,17 @@
 package com.jackdarlington.studenthub.main;
 
 import com.jackdarlington.studenthub.utils.ConfigParser;
+import com.jackdarlington.studenthub.utils.ConfigSection;
+import com.jackdarlington.studenthub.entity.AbstractUser;
+import com.jackdarlington.studenthub.entity.Course;
+import com.jackdarlington.studenthub.entity.Paper;
+import com.jackdarlington.studenthub.entity.StaffMember;
+import com.jackdarlington.studenthub.entity.Student;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -18,77 +23,64 @@ import java.util.logging.Logger;
  */
 public class Model {
     
-    
-    /* Networked Configuration */ /*
-    public static final String DB_NAME = "studentHubDB";
-    public static final String URL = "localhost";
-    public static final String PORT = "1527";
-    public static final String DB = "//" + URL + ":" + PORT + "/" + DB_NAME;
-    
-    /* Embedded Configuration */ 
-    public static String DB_NAME = "studentHubDB";
-    public static String URL = "";
-    public static String PORT = "";
-    public static String DB =  DB_NAME;
-    
-    /**/
-    
-    public static String USER_NAME = "pdc";
-    private static String PASSWORD = "pdc";
+    public static String dbName;
+    public static String url;
+    public static String port;
+    public static String dbUserName;
+    public static String dbPassword;
+    public static boolean isDBEmbedded;
     
     public static Connection conn;
     
     public static ConfigParser config;
+    public static ConfigSection dbInfo;
+    
+    public static ArrayList<AbstractUser> users;
+    public static HashMap<String, Paper> papers;
+    public static HashMap<String, Course> courses;
+    
+    public static AbstractUser loggedInUser;
+    
+    public Model() {
+        config = new ConfigParser();
+        Controller.updateModelInfo();
+        try {
+            establishConnection();
+            papers = Paper.initialisePapers();
+            courses = Course.initialiseCourses();
+            loadUsers();
+        } catch (SQLException ex) {
+            System.err.println("SQL Not Connected!");
+        }
+    }
     
     public static String getPasswordCovered() {
         String out = "";
-        for (int i = 0; i < Model.PASSWORD.length(); i++) {
-            out += "*";
+        if (dbPassword != null) {
+            for (int i = 0; i < dbPassword.length(); i++) {
+                out += "*";
+            }
         }
         return out;
     }
     
-    public Model() {
-        config = new ConfigParser();
-        establishConnection();
-        createTable("STUDENTS","ID INT","FIRST_NAME VARCHAR(20)", "LAST_NAME VARCHAR(20)", "EMAIL_ADDRESS VARCHAR(40)", "PASSWORD VARCHAR(40)");
-    }
-    
-    public static void updateDBInformation(String dbName, String url, String port, String userName, String password) {
-        Model.DB_NAME = dbName;
-        Model.URL = url;
-        Model.PORT = port;
-        Model.USER_NAME = userName;
-        Model.PASSWORD = password.charAt(0) == '*' ? "" : password;
-        System.out.println("[Database Info Updated] dbName: " + Model.DB_NAME + ", url: " + Model.URL + ":" + Model.PORT + ", userName: " + Model.USER_NAME + ", password: " + Model.getPasswordCovered());
-    }
-    
-    public static void establishConnection() {
-        try {
-            Model.conn = DriverManager.getConnection(("jdbc:derby:" + DB + "; create=true"), USER_NAME, PASSWORD);
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
+    public static void establishConnection() throws SQLException {
+        String db;
+        if (config.getSection("databaseConnection").get("embedded").equals("false")) {
+            db = "//" + url + ":" + port + "/" + dbName;
+        } else {
+            db = dbName;
         }
+        Model.conn = DriverManager.getConnection(("jdbc:derby:" + db + "; create=true"), dbUserName, dbPassword);
     }
     
-    public static void createTable(String tableName, String... variables) {
-        try {
-            Statement st = conn.createStatement();
-            String createTable = "CREATE TABLE " + tableName + " (";
-            for (String s : variables) {
-                createTable += s + ", ";
-            }
-            createTable = createTable.substring(0, createTable.length() - 2) + ")";
-            st.executeUpdate(createTable);
-        } catch (SQLException ex) {
-            Logger.getLogger(Model.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-    public boolean logIn(String email, String password) {
-        
-        return false;
+    public static void loadUsers() {
+        AbstractUser.userIDCounter = 1;
+        Model.users = new ArrayList<>();
+        Model.users.add(new Student("Jack", "Darlington", "password123", "Bachelor of Computer and Information Science", 60));
+        System.out.println("User " + Model.users.get(0).getUserName() + " added!");
+        Model.users.add(new StaffMember("Jack", "Darlington", "password123"));
+        System.out.println("User " + Model.users.get(1).getUserName() + " added!");
     }
     
 }

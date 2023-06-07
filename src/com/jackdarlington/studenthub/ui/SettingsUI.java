@@ -6,6 +6,13 @@ package com.jackdarlington.studenthub.ui;
 
 import com.jackdarlington.studenthub.main.*;
 import com.jackdarlington.studenthub.main.Model;
+import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.net.ConnectException;
+import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,6 +25,7 @@ public class SettingsUI extends javax.swing.JFrame {
      */
     public SettingsUI() {
         initComponents();
+        saveSettingsButton.requestFocusInWindow();
     }
 
     /**
@@ -36,13 +44,9 @@ public class SettingsUI extends javax.swing.JFrame {
         dbNameSettingsLabel = new javax.swing.JLabel();
         dbNameSettingsField = new javax.swing.JTextField();
         hostSettingsLabel = new javax.swing.JLabel();
-        hostSettingsLabel.setVisible(false);
         hostSettingsField = new javax.swing.JTextField();
-        hostSettingsField.setVisible(false);
         portSettingsLabel = new javax.swing.JLabel();
-        portSettingsLabel.setVisible(false);
         portSettingsField = new javax.swing.JTextField();
-        portSettingsField.setVisible(false);
         applicationCredentialsSettingsLabel = new javax.swing.JLabel();
         jSeparator2 = new javax.swing.JSeparator();
         userNameSettingsLabel = new javax.swing.JLabel();
@@ -51,7 +55,8 @@ public class SettingsUI extends javax.swing.JFrame {
         passwordSettingsField = new javax.swing.JTextField();
         networkedSettingsButton = new javax.swing.JRadioButton();
         embeddedSettingsButton = new javax.swing.JRadioButton();
-        jButton1 = new javax.swing.JButton();
+        databaseErrorLabel = new javax.swing.JLabel();
+        saveSettingsButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Settings");
@@ -60,36 +65,51 @@ public class SettingsUI extends javax.swing.JFrame {
         setMinimumSize(jPanel1.getMinimumSize());
         setResizable(false);
 
-        jPanel1.setMaximumSize(new java.awt.Dimension(309, 400));
-        jPanel1.setMinimumSize(new java.awt.Dimension(309, 317));
-        jPanel1.setPreferredSize(new java.awt.Dimension(309, 317));
+        jPanel1.setMaximumSize(new java.awt.Dimension(300, 400));
+        jPanel1.setMinimumSize(new java.awt.Dimension(300, 320));
+        jPanel1.setPreferredSize(new java.awt.Dimension(300, 320));
 
         databaseSettingsLabel.setText("Database");
 
         dbNameSettingsLabel.setText("Name");
 
-        dbNameSettingsField.setText(Model.DB_NAME);
+        dbNameSettingsField.setText(Model.dbName);
         dbNameSettingsField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dbNameSettingsFieldActionPerformed(evt);
             }
         });
+        dbNameSettingsField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                dbNameSettingsFieldKeyPressed(evt);
+            }
+        });
 
         hostSettingsLabel.setText("Host");
 
-        hostSettingsField.setText(Model.URL);
+        hostSettingsField.setText(Model.url);
         hostSettingsField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hostSettingsFieldActionPerformed(evt);
             }
         });
+        hostSettingsField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                hostSettingsFieldKeyPressed(evt);
+            }
+        });
 
         portSettingsLabel.setText("Port");
 
-        portSettingsField.setText(Model.PORT);
+        portSettingsField.setText(Model.port);
         portSettingsField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 portSettingsFieldActionPerformed(evt);
+            }
+        });
+        portSettingsField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                portSettingsFieldKeyPressed(evt);
             }
         });
 
@@ -97,10 +117,15 @@ public class SettingsUI extends javax.swing.JFrame {
 
         userNameSettingsLabel.setText("User Name");
 
-        userNameSettingsField.setText(Model.USER_NAME);
+        userNameSettingsField.setText(Model.dbUserName);
         userNameSettingsField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 userNameSettingsFieldActionPerformed(evt);
+            }
+        });
+        userNameSettingsField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                userNameSettingsFieldKeyPressed(evt);
             }
         });
 
@@ -112,12 +137,22 @@ public class SettingsUI extends javax.swing.JFrame {
                 passwordSettingsFieldActionPerformed(evt);
             }
         });
+        passwordSettingsField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                passwordSettingsFieldKeyPressed(evt);
+            }
+        });
 
         networkedOrEmbedded.add(networkedSettingsButton);
         networkedSettingsButton.setText("Networked");
         networkedSettingsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 networkedSettingsButtonActionPerformed(evt);
+            }
+        });
+        networkedSettingsButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                networkedSettingsButtonKeyPressed(evt);
             }
         });
 
@@ -129,17 +164,25 @@ public class SettingsUI extends javax.swing.JFrame {
                 embeddedSettingsButtonActionPerformed(evt);
             }
         });
+        embeddedSettingsButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                embeddedSettingsButtonKeyPressed(evt);
+            }
+        });
+
+        databaseErrorLabel.setBackground(new Color(0,0,0,0));
+        databaseErrorLabel.setForeground(new java.awt.Color(255, 0, 0));
+        databaseErrorLabel.setText(Model.conn == null ? "Database not connected!" : "");
+        databaseErrorLabel.setDebugGraphicsOptions(javax.swing.DebugGraphics.NONE_OPTION);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(applicationCredentialsSettingsLabel)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
+                        .addGap(24, 24, 24)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(passwordSettingsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -150,27 +193,26 @@ public class SettingsUI extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(userNameSettingsField, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(portSettingsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(portSettingsField, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(hostSettingsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(hostSettingsField, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(dbNameSettingsLabel)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(dbNameSettingsField, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(23, 23, 23)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(embeddedSettingsButton)
-                            .addComponent(networkedSettingsButton)))
-                    .addComponent(databaseSettingsLabel)
-                    .addComponent(jSeparator2)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(networkedSettingsButton)
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 263, Short.MAX_VALUE)
+                            .addComponent(databaseSettingsLabel)
+                            .addComponent(applicationCredentialsSettingsLabel)
+                            .addComponent(jSeparator2)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(dbNameSettingsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(hostSettingsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(portSettingsLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(portSettingsField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(hostSettingsField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(dbNameSettingsField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(databaseErrorLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -195,7 +237,9 @@ public class SettingsUI extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(portSettingsField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(portSettingsLabel))
-                .addGap(34, 34, 34)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(databaseErrorLabel)
+                .addGap(18, 18, 18)
                 .addComponent(applicationCredentialsSettingsLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -210,10 +254,34 @@ public class SettingsUI extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jButton1.setText("Save");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        if (Model.isDBEmbedded == false) {      hostSettingsLabel.setVisible(true);  } else {      hostSettingsLabel.setVisible(false);  }
+        if (Model.isDBEmbedded == false) {
+            hostSettingsField.setVisible(true);
+        } else {
+            hostSettingsField.setVisible(false);
+        }
+        if (Model.isDBEmbedded == false) {      portSettingsLabel.setVisible(true);  } else {      portSettingsLabel.setVisible(false);  }
+        if (Model.isDBEmbedded == false) {      portSettingsField.setVisible(true);  } else {      portSettingsField.setVisible(false);  }
+        if (Model.isDBEmbedded == false) {
+            networkedSettingsButton.setSelected(true);
+        } else {
+            networkedSettingsButton.setSelected(false);
+        }
+        if (Model.isDBEmbedded == true) {
+            embeddedSettingsButton.setSelected(true);
+        } else {
+            embeddedSettingsButton.setSelected(false);
+        }
+
+        saveSettingsButton.setText("Save");
+        saveSettingsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                saveSettingsButtonActionPerformed(evt);
+            }
+        });
+        saveSettingsButton.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                saveSettingsButtonKeyPressed(evt);
             }
         });
 
@@ -221,33 +289,59 @@ public class SettingsUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 310, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(saveSettingsButton, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(21, 21, 21))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(saveSettingsButton)
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void saveSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveSettingsButtonActionPerformed
+        Controller.updateDBInfo(
+            Model.config.get("databaseConnection", "embedded"),
+            dbNameSettingsField.getText(), 
+            hostSettingsField.getText(), 
+            portSettingsField.getText(), 
+            userNameSettingsField.getText(), 
+            passwordSettingsField.getText().charAt(0) == '*' ? Model.config.get("databaseConnection", "password") : passwordSettingsField.getText()
+        );
+        passwordSettingsField.setText(Model.getPasswordCovered());
+        
+        try {
+            if (Model.conn != null) {
+                Model.conn.close();
+                Model.establishConnection();
+                databaseErrorLabel.setText("");
+                this.setVisible(false);
+                this.dispose();
+            } else {
+                databaseErrorLabel.setText("Database not connected!");
+            }
+        } catch (SQLException ex) {
+            databaseErrorLabel.setText("Database not connected!");
+        }
+        
+        
+    }//GEN-LAST:event_saveSettingsButtonActionPerformed
+
     private void embeddedSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_embeddedSettingsButtonActionPerformed
         this.hostSettingsLabel.setVisible(false);
         this.hostSettingsField.setVisible(false);
         this.portSettingsLabel.setVisible(false);
         this.portSettingsField.setVisible(false);
-
+        Model.config.set("databaseConnection", "embedded", "true");
     }//GEN-LAST:event_embeddedSettingsButtonActionPerformed
 
     private void networkedSettingsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_networkedSettingsButtonActionPerformed
@@ -255,6 +349,7 @@ public class SettingsUI extends javax.swing.JFrame {
         this.hostSettingsField.setVisible(true);
         this.portSettingsLabel.setVisible(true);
         this.portSettingsField.setVisible(true);
+        Model.config.set("databaseConnection", "embedded", "false");
     }//GEN-LAST:event_networkedSettingsButtonActionPerformed
 
     private void passwordSettingsFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passwordSettingsFieldActionPerformed
@@ -277,15 +372,53 @@ public class SettingsUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_dbNameSettingsFieldActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        Model.updateDBInformation(
-            dbNameSettingsField.getText(), 
-            hostSettingsField.getText(), 
-            portSettingsField.getText(), 
-            userNameSettingsField.getText(), 
-            passwordSettingsField.getText()
-        );
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void saveSettingsButtonKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_saveSettingsButtonKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER || evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            saveSettingsButtonActionPerformed(null);
+        }
+    }//GEN-LAST:event_saveSettingsButtonKeyPressed
+
+    private void embeddedSettingsButtonKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_embeddedSettingsButtonKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER || evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            saveSettingsButtonActionPerformed(null);
+        }
+    }//GEN-LAST:event_embeddedSettingsButtonKeyPressed
+
+    private void networkedSettingsButtonKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_networkedSettingsButtonKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER || evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            saveSettingsButtonActionPerformed(null);
+        }
+    }//GEN-LAST:event_networkedSettingsButtonKeyPressed
+
+    private void dbNameSettingsFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_dbNameSettingsFieldKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER || evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            saveSettingsButtonActionPerformed(null);
+        }
+    }//GEN-LAST:event_dbNameSettingsFieldKeyPressed
+
+    private void hostSettingsFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hostSettingsFieldKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER || evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            saveSettingsButtonActionPerformed(null);
+        }
+    }//GEN-LAST:event_hostSettingsFieldKeyPressed
+
+    private void portSettingsFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_portSettingsFieldKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER || evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            saveSettingsButtonActionPerformed(null);
+        }
+    }//GEN-LAST:event_portSettingsFieldKeyPressed
+
+    private void userNameSettingsFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_userNameSettingsFieldKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER || evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            saveSettingsButtonActionPerformed(null);
+        }
+    }//GEN-LAST:event_userNameSettingsFieldKeyPressed
+
+    private void passwordSettingsFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_passwordSettingsFieldKeyPressed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER || evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            saveSettingsButtonActionPerformed(null);
+        }
+    }//GEN-LAST:event_passwordSettingsFieldKeyPressed
 
     /**
      * @param args the command line arguments
@@ -301,13 +434,13 @@ public class SettingsUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel applicationCredentialsSettingsLabel;
+    private javax.swing.JLabel databaseErrorLabel;
     private javax.swing.JLabel databaseSettingsLabel;
     private javax.swing.JTextField dbNameSettingsField;
     private javax.swing.JLabel dbNameSettingsLabel;
     private javax.swing.JRadioButton embeddedSettingsButton;
     private javax.swing.JTextField hostSettingsField;
     private javax.swing.JLabel hostSettingsLabel;
-    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
@@ -317,6 +450,7 @@ public class SettingsUI extends javax.swing.JFrame {
     private javax.swing.JLabel passwordSettingsLabel;
     private javax.swing.JTextField portSettingsField;
     private javax.swing.JLabel portSettingsLabel;
+    private javax.swing.JButton saveSettingsButton;
     private javax.swing.JTextField userNameSettingsField;
     private javax.swing.JLabel userNameSettingsLabel;
     // End of variables declaration//GEN-END:variables
