@@ -5,8 +5,12 @@
 package com.jackdarlington.studenthub.main;
 
 import com.jackdarlington.studenthub.entity.AbstractUser;
+import com.jackdarlington.studenthub.entity.StaffMember;
+import com.jackdarlington.studenthub.entity.Student;
 import com.jackdarlington.studenthub.utils.ConfigSection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -65,15 +69,27 @@ public class Controller {
         return false;
     }
     
-    public static void writeUsers() {
-        for (AbstractUser user : Model.users) {
-            try {
-                user.writeUserToDatabase();
-            } catch (SQLException e) {
-                System.err.println("SQL Error while writing users to database. See stack trace for more info.");
-                e.printStackTrace();
-            }
+    public static void loadUsers() {
+        AbstractUser.userIDCounter = 1;
+        Model.users = new ArrayList<>();
+        try {
+            Student.readStudentsFromDatabase();
+            StaffMember.readStaffMemebersFromDatabase();
+        } catch (SQLException ex) {
+            Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public static void updateUserData(String[] data) {
+        Model.loggedInUser.setFirstName(data[0]);
+        Model.loggedInUser.setLastName(data[1]);
+        
+        int index = 2;
+        for (Map.Entry<String, String> e : Model.loggedInUser.userData.entrySet()) {
+            Model.loggedInUser.userData.replace(e.getKey(), data[index]);
+            index++;
+        }
+        System.out.println("[USER INFO] User " + Model.loggedInUser.getUserName() + " details updated!");
     }
     
 }

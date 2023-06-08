@@ -5,9 +5,11 @@
 package com.jackdarlington.studenthub.entity;
 
 import com.jackdarlington.studenthub.main.Model;
-import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -30,19 +32,57 @@ public class Student extends AbstractUser {
         return studentID;
     }
     
+    public Student(String firstName, String lastName, String password) {
+        super(firstName, lastName, password);
+        this.studentID = generateStudentID();
+        this.isEnrolled = false;
+    }
+    
     public Student(String firstName, String lastName, String password, String courseCode, int points) {
         super(firstName, lastName, password);
         this.studentID = generateStudentID();
         this.points = points;
         this.course = Model.courses.get(courseCode);
-        for (int i = 0; i < userData.size(); i++) {
-            userData.put("null", "null");
-        }
+        this.isEnrolled = false;
+    }
+    
+    public Student(String studentID, String studentName, String studentEmail, String firstName, String lastName, String password, Map<String, String> data) {
+        super(String.valueOf(AbstractUser.userIDCounter++), studentName, studentEmail, firstName, lastName, password, data);
+        this.studentID = Integer.valueOf(studentID);
+        this.isEnrolled = false;
     }
 
     private Integer generateStudentID() {
         Random rand = new Random(this.getUserID());
         return rand.nextInt(89000000) + 10000000;
+    }
+    
+    public static void readStudentsFromDatabase() throws SQLException {
+        Statement sqlReadStudents = Model.conn.createStatement();
+        ResultSet student = sqlReadStudents.executeQuery("SELECT * FROM STUDENTS");
+        while (student.next()) {
+            Map<String, String> data = new LinkedHashMap<>();
+            data.put("Personal Email", student.getString("PERSONALEMAIL"));
+            data.put("Phone Number", student.getString("PHONENO"));
+            data.put("Street Address 1", student.getString("STREETADDRESS1"));
+            data.put("Street Address 2", student.getString("STREETADDRESS2"));
+            data.put("Suburb", student.getString("SUBURB"));
+            data.put("City", student.getString("CITY"));
+            data.put("Post Code", student.getString("POSTCODE"));
+            
+            Model.users.add(
+                    new Student(
+                            student.getString("STUDENTID"),
+                            student.getString("STUDENTNAME"),
+                            student.getString("STUDENTEMAIL"),
+                            student.getString("FIRSTNAME"), 
+                            student.getString("LASTNAME"), 
+                            student.getString("PASSWORD"),
+                            data
+                    )
+            );
+            System.out.println("[DATABASE] Student record " + student.getString("STUDENTNAME") + " added from database!");
+        }
     }
     
     @Override
@@ -62,32 +102,5 @@ public class Student extends AbstractUser {
     public String getUserType() {
         return "Student";
     }
-
-    @Override
-    protected PreparedStatement userTypeWriteSpecificData(PreparedStatement preSt, int index) throws SQLException {
-        if (!this.userData.isEmpty()) {
-            for (Map.Entry<String, String> e : this.userData.entrySet()) {
-                preSt.setString(index++, e.getValue());
-            }
-        }
-        
-        if (course != null) {
-            preSt.setString(index++, course.getCourseCode());
-            
-            String userPapers = "";
-            String userGrades = "";
-            for (Map.Entry<Paper, Grade> e : this.papers.entrySet()) {
-                userPapers += e.getKey() + ",";
-                userGrades += e.getValue() + ",";
-            }
-
-            preSt.setString(index++, userPapers.substring(0, userPapers.length() - 1));
-            preSt.setString(index++, userGrades.substring(0, userGrades.length() - 1));
-        }
-        
-        return preSt;
-    }
-
-    
     
 }

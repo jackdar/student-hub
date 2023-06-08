@@ -48,7 +48,7 @@ public class Model {
             establishConnection();
             papers = Paper.initialisePapers();
             courses = Course.initialiseCourses();
-            loadUsers();
+            Controller.loadUsers();
         } catch (SQLException ex) {
             System.err.println("SQL Not Connected!");
         }
@@ -72,15 +72,6 @@ public class Model {
             db = dbName;
         }
         Model.conn = DriverManager.getConnection(("jdbc:derby:" + db + "; create=true"), dbUserName, dbPassword);
-    }
-    
-    public static void loadUsers() {
-        AbstractUser.userIDCounter = 1;
-        Model.users = new ArrayList<>();
-        Model.users.add(new Student("Jack", "Darlington", "password123", "Bachelor of Computer and Information Science", 60));
-        System.out.println("User " + Model.users.get(0).getUserName() + " added!");
-        Model.users.add(new StaffMember("Jack", "Darlington", "password123"));
-        System.out.println("User " + Model.users.get(1).getUserName() + " added!");
     }
     
 }
